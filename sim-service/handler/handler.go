@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sim-service/model"
+
+	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/model"
 )
 
 type NodeJSON struct {

@@ -3,9 +3,10 @@ package memory
 import (
 	"context"
 	"errors"
-	discovery "pkg/registry"
 	"sync"
 	"time"
+
+	discovery "github.com/JuanPabloJimenez0250013/orbital-net/pkg/registry"
 )
 
 type serviceName string

@@ -10,11 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"sim-service/handler"
-	"sim-service/model"
-
 	"github.com/JuanPabloJimenez0250013/orbital-net/pkg/discovery/consul"
 	discovery "github.com/JuanPabloJimenez0250013/orbital-net/pkg/registry"
+	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/handler"
+	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/model"
 )
 
 const (

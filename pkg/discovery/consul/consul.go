@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	discovery "pkg/registry"
 	"strconv"
 	"strings"
 
+	discovery "github.com/JuanPabloJimenez0250013/orbital-net/pkg/registry"
 	consul "github.com/hashicorp/consul/api"
 )
 

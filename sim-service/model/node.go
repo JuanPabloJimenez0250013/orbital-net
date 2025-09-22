@@ -3,7 +3,8 @@ package model
 import (
 	"fmt"
 	"math"
-	"sim-service/misc"
+
+	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/misc"
 )
 
 type Node struct {
