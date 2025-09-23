@@ -36,10 +36,10 @@ func NodesHandler(w http.ResponseWriter, r *http.Request) {
 		nodesJSON = append(nodesJSON, NodeJSON{
 			Name:      model.Nodes[i].Name,
 			ID:        model.Nodes[i].ID,
-			Speed:     model.Nodes[i].GetLinearSpeed(),
-			Altitude:  model.Nodes[i].Orbit.Radius - model.Nodes[i].ParentPlanet.Radius,
-			XPos:      xPos,
-			YPos:      yPos,
+			Speed:     (model.Nodes[i].GetLinearSpeed()) / model.SIMULATION_SCALE_TO_ONE,
+			Altitude:  (model.Nodes[i].Orbit.Radius - model.Nodes[i].ParentPlanet.Radius) / model.SIMULATION_SCALE_TO_ONE,
+			XPos:      xPos / model.SIMULATION_SCALE_TO_ONE,
+			YPos:      yPos / model.SIMULATION_SCALE_TO_ONE,
 			Interface: fmt.Sprintf("%dxG%d", model.Nodes[i].Interface.PortQuantity, model.Nodes[i].Interface.PortGen),
 			CanView:   visibleNodes,
 		})

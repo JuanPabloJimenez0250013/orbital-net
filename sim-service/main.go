@@ -18,8 +18,8 @@ import (
 
 const (
 	SERVICE_NAME = "sim-service"
-	PORT         = 8080
-	CONSUL_HOST  = "localhost"
+	PORT         = 8081
+	CONSUL_HOST  = "consul"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	http.HandleFunc("/", handler.NodesHandler)
 	go func() {
 		addr := fmt.Sprintf(":%d", PORT)
-		fmt.Printf("🌐 Server listening on http://localhost%s\n", addr)
+		fmt.Printf("🌐 Server listening on %s%s\n", SERVICE_NAME, addr)
 		if err := http.ListenAndServe(addr, nil); err != nil {
 			log.Fatalf("❌ Failed to start server: %v", err)
 		}
@@ -72,20 +72,15 @@ func registerWithConsul(ctx context.Context) (*consul.Registry, string) {
 		log.Fatalf("❌ Failed to connect to Consul: %v", err)
 	}
 
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Fatalf("❌ Failed to get container hostname: %v", err)
-	}
-
 	instanceID := discovery.GenerateInstanceID(SERVICE_NAME)
-	serviceAddr := fmt.Sprintf("%s:%d", hostname, PORT)
+	serviceAddr := fmt.Sprintf("%s:%d", SERVICE_NAME, PORT) // use service name instead of hostname
 
 	if err := registry.Register(ctx, instanceID, SERVICE_NAME, serviceAddr); err != nil {
 		log.Fatalf("❌ Failed to register in Consul: %v", err)
 	}
 	fmt.Println("✅ Service registered in Consul")
 
-	// Keep rePORTing healthy state
+	// Keep reporting healthy state
 	go func() {
 		for {
 			select {
