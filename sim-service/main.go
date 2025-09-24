@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,25 +13,38 @@ import (
 	"github.com/JuanPabloJimenez0250013/orbital-net/pkg/discovery/consul"
 	discovery "github.com/JuanPabloJimenez0250013/orbital-net/pkg/registry"
 	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/handler"
+	pb "github.com/JuanPabloJimenez0250013/orbital-net/sim-service/handler/proto"
 	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/model"
+	"google.golang.org/grpc"
 )
 
-const (
+var (
 	SERVICE_NAME = "sim-service"
 	PORT         = 8081
-	CONSUL_HOST  = "consul"
+	CONSUL_HOST  = getEnv("CONSUL_HOST", "localhost") // fallback if not set
 )
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 func main() {
 	model.CreateSimObjects()
 
 	// Start HTTP server
-	http.HandleFunc("/", handler.NodesHandler)
 	go func() {
-		addr := fmt.Sprintf(":%d", PORT)
-		fmt.Printf("🌐 Server listening on %s%s\n", SERVICE_NAME, addr)
-		if err := http.ListenAndServe(addr, nil); err != nil {
-			log.Fatalf("❌ Failed to start server: %v", err)
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", PORT))
+		if err != nil {
+			log.Fatalf("❌ Failed to listen: %v", err)
+		}
+		grpcServer := grpc.NewServer()
+		pb.RegisterSimServiceServer(grpcServer, &handler.SimServer{})
+		fmt.Printf("🌐 gRPC server listening on %s:%d\n", SERVICE_NAME, PORT)
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("❌ Failed to serve gRPC: %v", err)
 		}
 	}()
 

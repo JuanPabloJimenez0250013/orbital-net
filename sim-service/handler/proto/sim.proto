@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package sim;
+
+// 👇 Add this line — adjust import path to match your module
+option go_package = ".";
+
+service SimService {
+  rpc GetNodes (Empty) returns (NodesResponse);
+}
+
+message Empty {}
+
+message Node {
+  string name = 1;
+  string id = 2;
+  double speed = 3;
+  double altitude = 4;
+  double x_pos = 5;
+  double y_pos = 6;
+  string interface = 7;
+  repeated string can_view = 8;
+}
+
+message NodesResponse {
+  repeated Node nodes = 1;
+}

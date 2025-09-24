@@ -1,2 +1,8 @@
 # Makefiles
 Makefile
+
+# Tests
+tests/*
+
+# ENV
+.env

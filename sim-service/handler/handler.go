@@ -1,28 +1,19 @@
 package handler
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
 
+	pb "github.com/JuanPabloJimenez0250013/orbital-net/sim-service/handler/proto"
 	"github.com/JuanPabloJimenez0250013/orbital-net/sim-service/model"
 )
 
-type NodeJSON struct {
-	Name      string
-	ID        string
-	Speed     float64
-	Altitude  float64
-	XPos      float64
-	YPos      float64
-	Interface string
-	CanView   []string
+type SimServer struct {
+	pb.UnimplementedSimServiceServer
 }
 
-func NodesHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	var nodesJSON []NodeJSON
+func (s *SimServer) GetNodes(ctx context.Context, in *pb.Empty) (*pb.NodesResponse, error) {
+	var nodes []*pb.Node
 
 	for i := range model.Nodes {
 		var visibleNodes []string
@@ -33,10 +24,10 @@ func NodesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		xPos, yPos := model.Nodes[i].XYPosition()
-		nodesJSON = append(nodesJSON, NodeJSON{
+		nodes = append(nodes, &pb.Node{
 			Name:      model.Nodes[i].Name,
-			ID:        model.Nodes[i].ID,
-			Speed:     (model.Nodes[i].GetLinearSpeed()) / model.SIMULATION_SCALE_TO_ONE,
+			Id:        model.Nodes[i].ID,
+			Speed:     model.Nodes[i].GetLinearSpeed() / model.SIMULATION_SCALE_TO_ONE,
 			Altitude:  (model.Nodes[i].Orbit.Radius - model.Nodes[i].ParentPlanet.Radius) / model.SIMULATION_SCALE_TO_ONE,
 			XPos:      xPos / model.SIMULATION_SCALE_TO_ONE,
 			YPos:      yPos / model.SIMULATION_SCALE_TO_ONE,
@@ -45,5 +36,5 @@ func NodesHandler(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	json.NewEncoder(w).Encode(nodesJSON)
+	return &pb.NodesResponse{Nodes: nodes}, nil
 }
