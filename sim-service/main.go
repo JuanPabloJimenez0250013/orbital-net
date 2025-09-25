@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -20,8 +21,8 @@ import (
 
 var (
 	SERVICE_NAME = "sim-service"
-	PORT         = 8081
-	CONSUL_HOST  = getEnv("CONSUL_HOST", "localhost") // fallback if not set
+	PORT, _      = strconv.Atoi(getEnv("SIM_SERVICE_PORT", "8081"))
+	CONSUL_HOST  = getEnv("CONSUL_HOST", "localhost")
 )
 
 func getEnv(key, fallback string) string {
